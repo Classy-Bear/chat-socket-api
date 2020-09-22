@@ -1,47 +1,27 @@
-const express = require('express');
-const socket = require('socket.io');
-const api_fetcher = require('./api/api_fetcher');
+// Node modules.
+const express = require("express");
+const socket = require("socket.io");
+// Local modules.
+const SocketsEvents = require("./api/socket_events");
 
 const PORT = 4000;
 
-// Build HTTP server
+// Build the HTTP server.
 const app = express();
 const server = app.listen(PORT, () => {
-    console.log(`http://localhost:${PORT}`);
+  console.log(`http://localhost:${PORT}`);
 });
 
-// Upgrade HTTP server to socket
+// Upgrade the HTTP server to a WebSocket server.
 const io = new socket(server);
-io.on('connection', (socket) => {
-    socket.on('save', async (data) => {
-        // POST the message
-        await api_fetcher.sendMessage(
-            data['message'], 
-            data['sender'], 
-            data['receiver'],
-        );
-        // Is the receiver online?
-        io.emit(data['receiver']);
-    });
-    socket.on('ask for message', async (data) => {
-        // GET the message, because the user is online.
-        const messages = await api_fetcher.getById('messages/sender_receiver', `${data['sender']}&${data['receiver']}`);
-        // Emit the messages and deliver it to the message receiver. Here you go :) 
-        io.emit(data['receiver'], messages);
-    });
-    socket.on('ack', async (data) => {
-        // The user receive the message
-        // DELETE the message from DB.
-       await api_fetcher.delete('messages', data);
-    });
-    // socket.on('connected', async (id) => {
-    //     const user = await api_fetcher.getById('users', id);
-    //     socket.broadcast.emit('user connected', user['user']);
-    // });
 
-    // socket.on('disconnected', async (id) => {
-    //     const user = await api_fetcher.getById('users', id);
-    //     socket.broadcast.emit('user disconnected', user['user']);
-    // });
+const e = new SocketsEvents();
+
+// Sockets listeners.
+io.on("connection", (socket) => {
+  socket.on("save", (data) => e.onSave(data, io));
+  socket.on("ask for message", (data) => e.askForMessage(data, io));
+  socket.on("ack", e.ack);
+  socket.on("connected", (data) => e.connected(data, socket));
+  socket.on("disconnected", (data) => e.disconnected(data, socket));
 });
-
