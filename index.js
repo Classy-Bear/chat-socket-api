@@ -4,7 +4,7 @@ const {
   onSave, askForMessage, connected, ack, disconnected,
 } = require('./modules/socket_events');
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 const app = express();
 const server = app.listen(PORT);
 const io = new Socket(server);
