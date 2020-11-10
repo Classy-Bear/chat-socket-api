@@ -1,1 +1,1 @@
-# Socket.IO Server
+# ChatApp Socket.IO API in Node.js
