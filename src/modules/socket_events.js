@@ -37,7 +37,9 @@ const askForMessage = async (data, io) => {
     'messages/senderToReceiver',
     `${data.sender}&${data.receiver}`,
   );
-  io.emit(data.receiver, messages);
+	if (data.receiver) {
+  	io.emit(data.receiver, messages);
+	}
 };
 /**
  * Deletes a message from the database.
