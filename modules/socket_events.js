@@ -10,7 +10,7 @@ const onSave = async (data, io) => {
 };
 const askForMessage = async (data, io) => {
   const messages = await apiFetcher.getById(
-    'messages/sender_receiver',
+    'messages/senderToReceiver',
     `${data.sender}&${data.receiver}`,
   );
   io.emit(data.receiver, messages);
