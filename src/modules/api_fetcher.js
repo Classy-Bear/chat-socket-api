@@ -7,7 +7,7 @@ const axios = require('axios');
  * @private
  */
 const instance = axios.create({
-  baseURL: process.env.URL,
+	baseURL: process.env.URL || 'http://localhost:5000',
   timeout: 5000,
 });
 
@@ -15,11 +15,14 @@ const instance = axios.create({
  * Handle incomming HTTP response.
  * @private
  */
-function api(request) {
+async function api(request) {
   let data;
-  request
-    .then((res) => { data = res.data; })
-    .catch(() => { data = null; });
+	try {
+		const res = await request;
+		data = res.data;
+	} catch {
+		data = null;
+	}
   return data;
 }
 
@@ -38,6 +41,13 @@ const getAll = (route) => api(instance.get(`/${route}`));
  * @param {String} id - ID of message to get.
  */
 const getById = (route, id) => api(instance.get(`/${route}/${id}`));
+/**
+ * Get all the messages from a sender to a receiver.
+ *
+ * @param {String} sender
+ * @param {String} receiver
+ */
+const getMessagesFromSenderToReceiver = (sender, receiver) => api(instance.get(`/messages/senderToReceiver/${sender}&${receiver}`));
 /**
  * Creates a user.
  *
@@ -70,6 +80,7 @@ const deleteRequest = (route, id) => api(instance.delete(`/${route}/${id}`));
 module.exports = {
   getAll,
   getById,
+	getMessagesFromSenderToReceiver,
   createUser,
   sendMessage,
   updateUser,

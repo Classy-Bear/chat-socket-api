@@ -33,12 +33,11 @@ const onSave = async (data, io) => {
  * @param {Object} io - Socket instance.
  */
 const askForMessage = async (data, io) => {
-  const messages = await apiFetcher.getById(
-    'messages/senderToReceiver',
-    `${data.sender}&${data.receiver}`,
+  const messages = await apiFetcher.getMessagesFromSenderToReceiver(
+    data.sender, data.receiver
   );
-	if (data.receiver) {
-  	io.emit(data.receiver, messages);
+	if(messages) {
+		io.emit(data.receiver, messages);
 	}
 };
 /**
@@ -50,7 +49,7 @@ const askForMessage = async (data, io) => {
  * @param {Object} data - Message to be deleted.
  */
 const ack = async (data) => {
-  await apiFetcher.delete('messages', data);
+  await apiFetcher.deleteRequest('messages', data);
 };
 /**
  * Broadcasts to all users that an user has connected.
