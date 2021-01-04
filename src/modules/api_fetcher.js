@@ -7,7 +7,7 @@ const axios = require('axios');
  * @private
  */
 const instance = axios.create({
-	baseURL: process.env.URL || 'http://localhost:5000',
+	baseURL: process.env.URL || 'http://10.0.0.41:5000',
   timeout: 5000,
 });
 
@@ -61,7 +61,7 @@ const createUser = (user) => api(instance.post('/users', { user }));
  * @param sender {String}
  * @param receiver {String}
  */
-const sendMessage = (message, sender, receiver) => api(instance.post('/messages', { message, sender, receiver }));
+const sendMessage = (message, sender, receiver, sendDate, dateOffset) => api(instance.post('/messages', { message, sender, receiver, sendDate, dateOffset }));
 /**
  * Updates a user.
  *

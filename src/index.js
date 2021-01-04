@@ -16,11 +16,12 @@ const server = express().listen(PORT);
 const io = new Socket(server);
 io.on('connection', (socket) => {
   socket
-    .on('save', (data) => e.onSave(data, io))
-    .on('ask for message', (data) => e.askForMessage(data, io))
+    .on('createdMessage', (data) => e.createdMessage(data, io))
+    .on('createdUser', (data) => e.createdUser(data, socket))
+    .on('deletedUser', (data) => e.deletedUser(data, socket))
+    .on('updatedUser', (data) => e.updatedUser(data, socket))
+    .on('askForMessage', (data) => e.askForMessage(data, io))
     .on('ack', e.ack)
-    .on('connected', (data) => e.connected(data, socket))
-    .on('disconnected', (data) => e.disconnected(data, socket));
 });
 
 /**
